@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Job Advert</title>
+    <!-- Add Bootstrap CSS link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Custom CSS for setting the background image */
+        body {
+            background-image: url('static/images/background.jpg'); 
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="card-title">Create a New Job Advert</h1>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('employer') }}">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Job Title:</label>
+                                <input type="text" name="title" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Job Description:</label>
+                                <textarea name="description" class="form-control" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Job Category:</label>
+                                <select name="category" id="category" class="form-control" required>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Sales">Sales</option>
+                                    <option value="Healthcare Nursing">Healthcare Nursing</option>
+                                    <option value="Accounting_Finance">Accounting/Finance</option>
+                                    <!-- Add more categories as needed -->
+                                </select>
+                            </div>                            
+                            <div class="mb-3">
+                                <label for="company" class="form-label">Company:</label>
+                                <input type="text" name="company" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Location:</label>
+                                <select id="locationSelection" class="form-control" onchange="toggleLocationFields(this)">
+                                    <option value="current">Get Current Location</option>
+                                    <option value="manual">Add Location Manually</option>
+                                </select>
+                            </div>
+                            <div id="currentLocationFields" style="display: none;">
+                                <!-- Fields for current location -->
+                                <div class="mb-3">
+                                    <label for="currentCity" class="form-label">Current City:</label>
+                                    <input type="text" name="currentCity" id="currentCity" class="form-control" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="currentState" class="form-label">Current State:</label>
+                                    <input type="text" name="currentState" id="currentState" class="form-control" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="currentCountry" class="form-label">Current Country:</label>
+                                    <input type="text" name="currentCountry" id="currentCountry" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div id="manualLocationFields" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="country" class="form-label">Country:</label>
+                                    <select name="country" id="country" class="form-control" onchange="populateStates(this)">
+                                        <option value="">Select Country</option>
+                                        <option value="Australia">Australia</option>
+                                        <!-- Add more country options here -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="state" class="form-label">State:</label>
+                                    <select name="state" id="state" class="form-control" onchange="populateCities(this)">
+                                        <option value="">Select State</option>
+                                        <!-- Add options for states here based on selected country -->
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="city" class="form-label">City:</label>
+                                    <select name="city" id="city" class="form-control">
+                                        <option value="">Select City</option>
+                                        <!-- Add options for cities here based on selected state -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="salary" class="form-label">Salary:</label>
+                                <input type="text" name="salary" class="form-control">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Job Advert</button>
+                        </form>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Job Listings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JavaScript and jQuery (if needed) scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- JavaScript for populating state and city dropdowns based on country and state -->
+    <script>
+        // Sample data for states and cities
+        var stateData = {
+            "Australia": ["NSW", "Queensland", "Victoria"]
+        };
+
+        var cityData = {
+            "NSW": ["Sydney", "Wollongong", "NewCastle"],
+            "Queensland": ["Brisbane", "Cairns", "Gold Coast"],
+            "Victoria": ["Melbourne", "Wangaratta", "Kilmore"]
+        };
+
+        function populateStates(countryDropdown) {
+            var selectedCountry = countryDropdown.value;
+            var stateDropdown = document.getElementById("state");
+            stateDropdown.innerHTML = "<option value=''>Select State</option>";
+
+            if (selectedCountry in stateData) {
+                var states = stateData[selectedCountry];
+                for (var i = 0; i < states.length; i++) {
+                    var option = document.createElement("option");
+                    option.text = states[i];
+                    stateDropdown.add(option);
+                }
+            }
+        }
+
+        function populateCities(stateDropdown) {
+            var selectedState = stateDropdown.value;
+            var cityDropdown = document.getElementById("city");
+            cityDropdown.innerHTML = "<option value=''>Select City</option>";
+
+            if (selectedState in cityData) {
+                var cities = cityData[selectedState];
+                for (var i = 0; i < cities.length; i++) {
+                    var option = document.createElement("option");
+                    option.text = cities[i];
+                    cityDropdown.add(option);
+                }
+            }
+        }
+
+        function toggleLocationFields(selectionDropdown) {
+    var currentLocationFields = document.getElementById("currentLocationFields");
+    var manualLocationFields = document.getElementById("manualLocationFields");
+
+    if (selectionDropdown.value === "current") {
+        currentLocationFields.style.display = "block";
+        manualLocationFields.style.display = "none";
+
+        // Use the Geolocation API to get the current location
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var currentCity = document.getElementById("currentCity");
+                var currentState = document.getElementById("currentState");
+                var currentCountry = document.getElementById("currentCountry");
+
+                // Get latitude and longitude
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+
+                // Use a reverse geocoding service to get city, state, and country
+                var apiKey = "AIzaSyAsXudZtPQo8Nd7Tu7V68ZNCGMdpPNmmVE"; // Replace with your API key
+                var reverseGeocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
+
+                // Send a request to the reverse geocoding API
+                fetch(reverseGeocodingUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.results && data.results.length > 0) {
+                            var addressComponents = data.results[0].address_components;
+                            var city = "";
+                            var state = "";
+                            var country = "";
+
+                            for (var i = 0; i < addressComponents.length; i++) {
+                                var component = addressComponents[i];
+                                if (component.types.includes("locality")) {
+                                    city = component.long_name;
+                                } else if (component.types.includes("administrative_area_level_1")) {
+                                    state = component.long_name;
+                                } else if (component.types.includes("country")) {
+                                    country = component.long_name;
+                                }
+                            }
+
+                            currentCity.value = city;
+                            currentState.value = state;
+                            currentCountry.value = country;
+                        }
+                    })
+                    .catch(error => console.error("Error fetching location data: " + error));
+            });
+        }
+    } else if (selectionDropdown.value === "manual") {
+        currentLocationFields.style.display = "none";
+        manualLocationFields.style.display = "block";
+    } else {
+        currentLocationFields.style.display = "none";
+        manualLocationFields.style.display = "none";
+    }
+}
+
+    </script>
+</body>
+</html>
