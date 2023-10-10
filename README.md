@@ -59,8 +59,10 @@ Before running the project, you need to have Flask installed on your computer. F
 
 
 
-### How to Run the Project
+### How to Run the Project 
+Open Terminal/Command Prompt
    ```bash
+   cd JOBFLASK
    python .\app.py
 
 
